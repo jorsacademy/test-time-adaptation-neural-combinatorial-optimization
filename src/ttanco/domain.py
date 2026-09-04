@@ -52,7 +52,7 @@ class TSPInstance:
     @cached_property
     def distance_matrix(self) -> np.ndarray:
         difference = self.coordinate_array[:, None, :] - self.coordinate_array[None, :, :]
-        distances = np.linalg.norm(difference, axis=2)
+        distances: np.ndarray = np.linalg.norm(difference, axis=2)
         if not np.all(np.isfinite(distances)):
             raise RuntimeError("distance matrix contains non-finite entries")
         distances.setflags(write=False)

@@ -378,7 +378,7 @@ def _adapter_tta(
                 trust_region_weight=config.trust_region_weight,
                 regularizer=regularizer,
             )
-            loss.backward()
+            loss.backward()  # type: ignore[no-untyped-call]
             gradient_norm = torch.nn.utils.clip_grad_norm_(
                 adapter.parameters(),
                 max_norm=config.gradient_clip,
@@ -472,7 +472,7 @@ def _active_search_model(
             trust_region_weight=config.trust_region_weight if source_model is not None else 0.0,
             regularizer=regularizer,
         )
-        loss.backward()
+        loss.backward()  # type: ignore[no-untyped-call]
         gradient_norm = torch.nn.utils.clip_grad_norm_(
             working_model.parameters(),
             max_norm=config.gradient_clip,

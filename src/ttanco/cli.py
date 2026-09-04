@@ -218,7 +218,7 @@ def _run_command(args: argparse.Namespace) -> object:
     if args.command == "train":
         training = load_dataset_jsonl(args.training)
         validation = load_dataset_jsonl(args.validation)
-        model, report = train_policy(
+        model, training_report = train_policy(
             training,
             validation,
             model_config=PolicyConfig(
@@ -239,9 +239,9 @@ def _run_command(args: argparse.Namespace) -> object:
         save_checkpoint(
             model,
             args.checkpoint,
-            metadata={"training_report": report.to_dict()},
+            metadata={"training_report": training_report.to_dict()},
         )
-        payload = report.to_dict()
+        payload = training_report.to_dict()
         if args.output_report:
             write_json(payload, args.output_report)
         return payload
@@ -269,7 +269,7 @@ def _run_command(args: argparse.Namespace) -> object:
         dataset = load_dataset_jsonl(args.dataset)
         model, metadata = load_checkpoint(args.checkpoint)
         template = _search_config(args, budget=max(args.budgets))
-        report = evaluate_methods(
+        evaluation_report = evaluate_methods(
             model,
             dataset,
             scenario=args.scenario,
@@ -279,16 +279,16 @@ def _run_command(args: argparse.Namespace) -> object:
             bootstrap_seed=args.bootstrap_seed,
             bootstrap_draws=args.bootstrap_draws,
         )
-        save_report_json(report, args.output_json)
+        save_report_json(evaluation_report, args.output_json)
         if args.output_csv:
-            save_report_csv(report, args.output_csv)
-        return {**report.to_dict(), "checkpoint_metadata": metadata}
+            save_report_csv(evaluation_report, args.output_csv)
+        return {**evaluation_report.to_dict(), "checkpoint_metadata": metadata}
 
     if args.command == "research":
         config = load_research_config(args.config)
-        report = run_research(config, checkpoint_directory=args.checkpoint_directory)
-        save_research_report(report, args.output_report)
-        return report.to_dict()
+        research_report = run_research(config, checkpoint_directory=args.checkpoint_directory)
+        save_research_report(research_report, args.output_report)
+        return research_report.to_dict()
 
     raise AssertionError("unreachable command")
 

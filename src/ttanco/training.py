@@ -202,7 +202,7 @@ def train_policy(
             )
             logits = cast(Tensor, model(coordinates))
             loss = _edge_loss(logits, targets)
-            loss.backward()
+            loss.backward()  # type: ignore[no-untyped-call]
             gradient_norm = torch.nn.utils.clip_grad_norm_(
                 model.parameters(),
                 max_norm=config.gradient_clip,

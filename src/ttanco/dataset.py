@@ -109,7 +109,8 @@ def _rescale_unit_square(coordinates: np.ndarray) -> np.ndarray:
     maximum = np.max(coordinates, axis=0)
     span = maximum - minimum
     span = np.where(span < 1e-9, 1.0, span)
-    return (coordinates - minimum) / span
+    scaled: np.ndarray = (coordinates - minimum) / span
+    return scaled
 
 
 def _ensure_distinct(coordinates: np.ndarray, *, seed: int) -> np.ndarray:
