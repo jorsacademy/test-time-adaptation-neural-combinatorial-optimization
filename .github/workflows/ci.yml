@@ -1,0 +1,73 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    name: Python ${{ matrix.python-version }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12"]
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+
+      - name: Install package and development dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install --index-url https://download.pytorch.org/whl/cpu "torch>=2.2,<3"
+          python -m pip install -e ".[dev]"
+          python -m pip check
+
+      - name: Lint
+        run: ruff check .
+
+      - name: Check formatting
+        run: ruff format --check .
+
+      - name: Type check
+        run: mypy --python-version "${{ matrix.python-version }}" src
+
+      - name: Test with branch coverage
+        run: pytest
+
+      - name: End-to-end source-train and TTA smoke
+        run: |
+          ttanco collect \
+            --count 6 --node-counts 5 6 --regimes uniform clustered \
+            --seed 100 --output /tmp/train.jsonl
+          ttanco collect \
+            --count 3 --node-counts 5 6 --regimes uniform \
+            --seed 200 --output /tmp/validation.jsonl
+          ttanco train /tmp/train.jsonl \
+            --validation /tmp/validation.jsonl \
+            --epochs 1 --hidden-dim 8 --message-layers 1 --mlp-layers 1 \
+            --patience 1 --seed 300 --checkpoint /tmp/source.safetensors
+          ttanco oracle /tmp/validation.jsonl \
+            --sample-index 0 --output /tmp/oracle.json
+          ttanco benchmark /tmp/validation.jsonl \
+            --checkpoint /tmp/source.safetensors \
+            --scenario smoke --budgets 4 \
+            --methods frozen_sampling augmentation_sampling adapter_tta nearest_neighbor_2opt \
+            --adaptation-steps 1 --batch-size 2 --bootstrap-draws 10 \
+            --output-json /tmp/benchmark.json --output-csv /tmp/benchmark.csv
