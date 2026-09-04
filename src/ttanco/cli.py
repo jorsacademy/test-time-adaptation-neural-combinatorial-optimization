@@ -5,14 +5,12 @@ from __future__ import annotations
 import argparse
 import json
 import sys
-from dataclasses import asdict
 from pathlib import Path
 from typing import cast
 
 from ttanco.adaptation import AVAILABLE_METHODS, SearchConfig, run_method
 from ttanco.dataset import (
     SUPPORTED_REGIMES,
-    TSPDataset,
     TSPRecord,
     generate_dataset,
     generate_instance,
@@ -20,8 +18,8 @@ from ttanco.dataset import (
     save_dataset_jsonl,
 )
 from ttanco.domain import (
-    TSPInstance,
     TourSolution,
+    TSPInstance,
     audit_tour,
     solve_brute_force,
     solve_held_karp,
@@ -203,9 +201,7 @@ def _run_command(args: argparse.Namespace) -> object:
         record = dataset.records[args.sample_index]
         held_karp = solve_held_karp(record.instance)
         brute_force = (
-            solve_brute_force(record.instance)
-            if record.instance.node_count <= 10
-            else None
+            solve_brute_force(record.instance) if record.instance.node_count <= 10 else None
         )
         if brute_force is not None and abs(brute_force.length - held_karp.length) > 1e-8:
             raise RuntimeError("Held-Karp and brute-force oracles disagree")

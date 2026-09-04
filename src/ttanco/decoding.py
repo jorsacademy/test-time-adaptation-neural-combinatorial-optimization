@@ -10,7 +10,7 @@ import numpy as np
 import torch
 from torch import Tensor
 
-from ttanco.domain import TSPInstance, TourSolution, audit_tour, solution_from_tour
+from ttanco.domain import TourSolution, TSPInstance, audit_tour, solution_from_tour
 from ttanco.model import EdgePolicy, EmbeddingAdapter
 
 

@@ -10,9 +10,9 @@ from ttanco.domain import (
     audit_tour,
     canonicalize_tour,
     nearest_neighbor_tour,
+    solution_from_tour,
     solve_brute_force,
     solve_held_karp,
-    solution_from_tour,
     two_opt,
 )
 
@@ -79,9 +79,7 @@ def test_domain_validation_and_exact_limits() -> None:
 
 def test_positive_coordinate_scaling_preserves_tour_order_and_scales_length() -> None:
     base = generate_instance(6, seed=17)
-    scaled = TSPInstance(
-        tuple((10.0 * x + 5.0, 10.0 * y - 7.0) for x, y in base.coordinates)
-    )
+    scaled = TSPInstance(tuple((10.0 * x + 5.0, 10.0 * y - 7.0) for x, y in base.coordinates))
     base_optimum = solve_held_karp(base)
     scaled_optimum = solve_held_karp(scaled)
     assert scaled_optimum.tour == base_optimum.tour

@@ -134,10 +134,14 @@ def _instance_result(
     absolute_gap = max(0.0, absolute_gap)
     relative_gap = 100.0 * absolute_gap / max(optimum_length, 1e-12)
     initial_gap = max(0.0, search.initial_solution.length - optimum_length)
-    improvement = 100.0 * max(
-        0.0,
-        search.initial_solution.length - search.solution.length,
-    ) / max(search.initial_solution.length, 1e-12)
+    improvement = (
+        100.0
+        * max(
+            0.0,
+            search.initial_solution.length - search.solution.length,
+        )
+        / max(search.initial_solution.length, 1e-12)
+    )
     if initial_gap <= 1e-12:
         recovery = 1.0
     else:
@@ -200,9 +204,7 @@ def _summary(
         if frozen is not None:
             gap_differences.append(row.relative_gap_percent - frozen.relative_gap_percent)
             length_improvements.append(
-                100.0
-                * (frozen.tour_length - row.tour_length)
-                / max(frozen.tour_length, 1e-12)
+                100.0 * (frozen.tour_length - row.tour_length) / max(frozen.tour_length, 1e-12)
             )
     ci_low: float | None = None
     ci_high: float | None = None
@@ -250,9 +252,7 @@ def _summary(
             np.mean(np.asarray([row.runtime_seconds for row in rows], dtype=float))
         ),
         mean_local_search_move_evaluations=float(
-            np.mean(
-                np.asarray([row.local_search_move_evaluations for row in rows], dtype=float)
-            )
+            np.mean(np.asarray([row.local_search_move_evaluations for row in rows], dtype=float))
         ),
         source_model_immutability_rate=float(
             np.mean(np.asarray([row.source_model_unchanged for row in rows], dtype=float))
@@ -357,9 +357,7 @@ def evaluate_methods(
     for budget in budgets:
         budget_rows = [row for row in instance_results if row.budget == budget]
         frozen_by_instance = {
-            row.instance_id: row
-            for row in budget_rows
-            if row.method == "frozen_sampling"
+            row.instance_id: row for row in budget_rows if row.method == "frozen_sampling"
         }
         for offset, method in enumerate(methods):
             rows = [row for row in budget_rows if row.method == method]

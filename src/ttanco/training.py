@@ -128,7 +128,9 @@ def _edge_loss(logits: Tensor, targets: Tensor) -> Tensor:
     return loss
 
 
-def _validation_metrics(model: EdgePolicy, dataset: TSPDataset) -> tuple[float, float, float, float]:
+def _validation_metrics(
+    model: EdgePolicy, dataset: TSPDataset
+) -> tuple[float, float, float, float]:
     losses: list[float] = []
     true_positive = 0
     false_positive = 0

@@ -2,12 +2,11 @@
 
 from __future__ import annotations
 
-import copy
 import math
 import time
 from collections.abc import Iterable
 from dataclasses import asdict, dataclass
-from typing import Literal, cast
+from typing import Literal
 
 import numpy as np
 import torch
@@ -15,8 +14,8 @@ from torch import Tensor, nn
 
 from ttanco.decoding import PolicyRollout, augmented_rollout, rollout_tour
 from ttanco.domain import (
-    TSPInstance,
     TourSolution,
+    TSPInstance,
     audit_tour,
     nearest_neighbor_tour,
     two_opt,
@@ -147,9 +146,13 @@ class _BestTracker:
         if not (audit.permutation_valid and audit.reported_length_consistent):
             raise RuntimeError("search produced an invalid tour")
         self.evaluations += 1
-        if self.best is None or solution.length < self.best.length - 1e-12 or (
-            math.isclose(solution.length, self.best.length, rel_tol=1e-12, abs_tol=1e-12)
-            and solution.tour < self.best.tour
+        if (
+            self.best is None
+            or solution.length < self.best.length - 1e-12
+            or (
+                math.isclose(solution.length, self.best.length, rel_tol=1e-12, abs_tol=1e-12)
+                and solution.tour < self.best.tour
+            )
         ):
             self.best = solution
             self.best_found_evaluation = self.evaluations
@@ -395,7 +398,9 @@ def _adapter_tta(
             adapter=adapter,
         )
     finally:
-        for parameter, requires_grad in zip(model.parameters(), original_requires_grad, strict=True):
+        for parameter, requires_grad in zip(
+            model.parameters(), original_requires_grad, strict=True
+        ):
             parameter.requires_grad_(requires_grad)
     fingerprint_after = model_state_fingerprint(model)
     adapter_norm = math.sqrt(float(adapter.squared_norm.detach().cpu()))

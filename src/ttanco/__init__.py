@@ -1,7 +1,7 @@
 """Verification-first test-time adaptation for neural combinatorial optimization."""
 
 from ttanco.adaptation import SearchConfig, SearchResult, run_method
-from ttanco.domain import TSPInstance, TourSolution, solve_held_karp
+from ttanco.domain import TourSolution, TSPInstance, solve_held_karp
 from ttanco.model import EdgePolicy, PolicyConfig
 
 __all__ = [

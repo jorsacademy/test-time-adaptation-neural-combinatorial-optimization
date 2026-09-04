@@ -11,7 +11,7 @@ from typing import Literal, cast
 
 import numpy as np
 
-from ttanco.domain import TSPInstance, TourSolution, audit_tour, solve_held_karp
+from ttanco.domain import TourSolution, TSPInstance, audit_tour, solve_held_karp
 from ttanco.utils import canonical_json, sha256_json
 
 GeneratorRegime = Literal[
@@ -259,8 +259,7 @@ def save_dataset_jsonl(dataset: TSPDataset, path: str | Path) -> None:
         )
     ]
     lines.extend(
-        canonical_json({"record_type": "record", **record.to_dict()})
-        for record in dataset.records
+        canonical_json({"record_type": "record", **record.to_dict()}) for record in dataset.records
     )
     output.write_text("\n".join(lines) + "\n", encoding="utf-8")
 

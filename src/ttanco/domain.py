@@ -390,9 +390,13 @@ def solve_brute_force(instance: TSPInstance, *, maximum_nodes: int = 10) -> Tour
         if permutation[0] > permutation[-1]:
             continue
         candidate = solution_from_tour(instance, (0,) + permutation)
-        if best is None or candidate.length < best.length - 1e-12 or (
-            math.isclose(candidate.length, best.length, rel_tol=1e-12, abs_tol=1e-12)
-            and candidate.tour < best.tour
+        if (
+            best is None
+            or candidate.length < best.length - 1e-12
+            or (
+                math.isclose(candidate.length, best.length, rel_tol=1e-12, abs_tol=1e-12)
+                and candidate.tour < best.tour
+            )
         ):
             best = candidate
     if best is None:

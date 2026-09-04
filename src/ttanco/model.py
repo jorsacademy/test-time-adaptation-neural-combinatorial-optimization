@@ -137,7 +137,9 @@ class EdgePolicy(nn.Module):
             raise ValueError("distance matrix has an incompatible shape")
         left = embeddings[:, None, :].expand(n, n, -1)
         right = embeddings[None, :, :].expand(n, n, -1)
-        edge_features = torch.cat((left + right, torch.abs(left - right), distances[..., None]), dim=2)
+        edge_features = torch.cat(
+            (left + right, torch.abs(left - right), distances[..., None]), dim=2
+        )
         logits = cast(Tensor, self.edge_scorer(edge_features)).squeeze(-1)
         logits = 0.5 * (logits + logits.transpose(0, 1))
         diagonal = torch.eye(n, dtype=torch.bool, device=logits.device)

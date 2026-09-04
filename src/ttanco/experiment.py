@@ -72,7 +72,9 @@ class ResearchConfig:
             raise ValueError("training and validation counts must be positive")
         if not self.training_node_counts or not self.validation_node_counts:
             raise ValueError("training and validation node-count sets must be nonempty")
-        if any(node_count < 4 for node_count in self.training_node_counts + self.validation_node_counts):
+        if any(
+            node_count < 4 for node_count in self.training_node_counts + self.validation_node_counts
+        ):
             raise ValueError("training and validation node counts must be at least four")
         if not self.training_regimes or not self.validation_regimes:
             raise ValueError("training and validation regimes must be nonempty")
