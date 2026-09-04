@@ -1,0 +1,33 @@
+name: One-time repository bootstrap
+
+on:
+  push:
+    branches: [budgeted-instance-adaptation]
+
+permissions:
+  contents: write
+
+jobs:
+  bootstrap:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out feature branch
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: budgeted-instance-adaptation
+          fetch-depth: 0
+
+      - name: Materialize repository and commit
+        shell: bash
+        run: |
+          cat .bootstrap/chunk_* | base64 --decode > /tmp/repository.tar.gz
+          tar -xzf /tmp/repository.tar.gz -C .
+          rm -rf .bootstrap
+          rm -f .github/workflows/bootstrap.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git commit -m 'Build budgeted test-time adaptation benchmark'
+          git push origin HEAD:budgeted-instance-adaptation
