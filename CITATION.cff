@@ -1,0 +1,18 @@
+cff-version: 1.2.0
+message: "If you use this research software, please cite the repository."
+title: "Test-Time Adaptation for Neural Combinatorial Optimization"
+type: software
+authors:
+  - family-names: "Academy"
+    given-names: "Jors"
+repository-code: "https://github.com/jorsacademy/test-time-adaptation-neural-combinatorial-optimization"
+url: "https://github.com/jorsacademy/test-time-adaptation-neural-combinatorial-optimization"
+version: 0.1.0
+date-released: 2026-09-04
+license: other
+keywords:
+  - test-time adaptation
+  - neural combinatorial optimization
+  - traveling salesperson problem
+  - active search
+  - operations research
