@@ -204,7 +204,7 @@ def adapt_to_task(
     for _ in range(inner_steps):
         optimizer.zero_grad(set_to_none=True)
         loss = _mean_loss(model, adapted, dataset, task.support_indices)
-        loss.backward()
+        torch.autograd.backward(loss)
         gradient_norm = torch.nn.utils.clip_grad_norm_(
             adapted.parameters(),
             gradient_clip,
