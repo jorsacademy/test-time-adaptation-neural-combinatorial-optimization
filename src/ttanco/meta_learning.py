@@ -183,10 +183,7 @@ def _mean_loss(
     dataset: TSPDataset,
     indices: tuple[int, ...],
 ) -> Tensor:
-    losses = [
-        _record_loss(model, adapter, dataset.records[index])
-        for index in indices
-    ]
+    losses = [_record_loss(model, adapter, dataset.records[index]) for index in indices]
     return torch.stack(losses).mean()
 
 
@@ -245,10 +242,7 @@ def meta_train_adapter(
 
     for _ in range(cfg.outer_epochs):
         order = rng.permutation(len(tasks))
-        gradient_sums = [
-            torch.zeros_like(parameter)
-            for parameter in result_parameters
-        ]
+        gradient_sums = [torch.zeros_like(parameter) for parameter in result_parameters]
         query_losses: list[float] = []
         for raw_index in order:
             task = tasks[int(raw_index)]
@@ -321,9 +315,13 @@ def _greedy_gap_pct(
             tour.append(nxt)
             current = nxt
     solution = solution_from_tour(record.instance, tuple(tour))
-    return 100.0 * (solution.length - record.optimum.length) / max(
-        record.optimum.length,
-        1e-12,
+    return (
+        100.0
+        * (solution.length - record.optimum.length)
+        / max(
+            record.optimum.length,
+            1e-12,
+        )
     )
 
 
@@ -358,14 +356,9 @@ def evaluate_few_shot(
         inner_steps=inner_steps,
         inner_learning_rate=inner_learning_rate,
     )
-    after_loss = float(
-        _mean_loss(model, adapted, dataset, task.query_indices)
-        .detach()
-        .cpu()
-    )
+    after_loss = float(_mean_loss(model, adapted, dataset, task.query_indices).detach().cpu())
     after_gaps = [
-        _greedy_gap_pct(model, adapted, dataset.records[index])
-        for index in task.query_indices
+        _greedy_gap_pct(model, adapted, dataset.records[index]) for index in task.query_indices
     ]
     return FewShotReport(
         task=task.name,
