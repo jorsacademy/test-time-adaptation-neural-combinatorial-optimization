@@ -63,10 +63,7 @@ def test_first_order_meta_training_and_few_shot_report_are_finite() -> None:
     )
     assert len(history) == 1
     assert math.isfinite(history[0])
-    assert any(
-        not torch.equal(before[key], value)
-        for key, value in trained.state_dict().items()
-    )
+    assert any(not torch.equal(before[key], value) for key, value in trained.state_dict().items())
 
     task = build_meta_tasks(dataset, support_size=2, query_size=2)[0]
     report = evaluate_few_shot(
